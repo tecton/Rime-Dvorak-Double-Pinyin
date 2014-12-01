@@ -1,0 +1,110 @@
+# Rime schema
+# encoding: utf-8
+
+schema:
+  schema_id: double_pinyin_dvorak
+  name: 德沃夏克·双拼
+  version: "0.1"
+  author:
+    - 唐宁 <tecton69@gmail.com>
+  description: |
+    根据张砷镓的双拼方案实现的德沃夏克布局输入。
+  dependencies:
+    - stroke
+
+switches:
+  - name: ascii_mode
+    reset: 0
+    states: [ 中文, 西文 ]
+  - name: full_shape
+    states: [ 半角, 全角 ]
+  - name: ascii_punct
+    states: [ ，。, ，． ]
+  - name: simplification
+    states: [ 漢字, 汉字 ]
+
+engine:
+  processors:
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  segmentors:
+    - ascii_segmentor
+    - matcher
+    - abc_segmentor
+    - punct_segmentor
+    - fallback_segmentor
+  translators:
+    - punct_translator
+    - reverse_lookup_translator
+    - script_translator
+  filters:
+    - simplifier
+    - uniquifier
+
+speller:
+  alphabet: zyxwvutsrqponmlkjihgfedcba; # 分号也是会使用的
+  delimiter: " '"  # 隔音符號用「'」；第一位的空白用來自動插入到音節邊界處
+  algebra:
+    - erase/^xx$/             # 碼表中有幾個拼音不明的字，編碼成xx了，消滅他
+    - derive/^([jqxy])u$/$1v/ # ju jv都是可以的
+    - xform/^([aoe].*)$/U$1/  # 添上固定的零聲母U
+    - xform/^zh/O/            # 替換聲母鍵，用大寫以防與原有的字母混淆
+    - xform/^ch/A/
+    - xform/^sh/E/
+    - xform/ei$/Q/            # 替換韻母鍵
+    - xform/ian$/L/
+    - xform/iu$/F/
+    - xform/er$/U/
+    - xform/[iu]ang$/G/
+    - xform/in$/B/
+    - xform/uo$/O/
+    - xform/uan$/Z/
+    - xform/i?ong$/P/
+    - xform/ia$/A/
+    - xform/ua$/X/
+    - xform/en$/N/
+    - xform/eng$/R/
+    - xform/ang$/H/
+    - xform/an$/S/
+    - xform/iao$/C/
+    - xform/ao$/T/
+    - xform/ing$|uai$/M/
+    - xform/ai$/J/
+    - xform/ie$/;/
+    - xform/ou$/Y/
+    - xform/un$/D/
+    - xform/ui$/K/
+    - xform/[uv]e$/W/
+    - xlit/QWERTYUOPASDFGHJKLZXCVBNM/qwertyuopasdfghjklzxcvbnm/  # 最後把雙拼碼全部變小寫
+
+translator:
+  dictionary: luna_pinyin     # 與【朙月拼音】共用詞典
+  prism: double_pinyin_dvorak
+
+reverse_lookup:
+  dictionary: stroke
+  enable_completion: true
+  prefix: "`"
+  suffix: "'"
+  tips: 〔筆畫〕
+  preedit_format:
+    - xlit/hspnz/一丨丿丶乙/
+  comment_format:
+    - xform/([nl])v/$1ü/
+
+punctuator:
+  import_preset: default
+
+key_binder:
+  import_preset: default
+
+recognizer:
+  import_preset: default
+  patterns:
+    reverse_lookup: "`[a-z]*'?$"

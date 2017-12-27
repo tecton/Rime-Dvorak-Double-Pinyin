@@ -81,7 +81,7 @@ speller:
     - xform/un$/D/
     - xform/ui$/K/
     - xform/[uv]e$/W/
-    - xlit/QWERTYUOPASDFGHJKLZXCVBNM/qwertyuopasdfghjklzxcvbnm/  # 最後把雙拼碼全部變小寫
+    - xlit/QWERTYUIOPASDFGHJKLZXCVBNM/qwertyuiopasdfghjklzxcvbnm/  # 最後把雙拼碼全部變小寫
 
 translator:
   dictionary: luna_pinyin     # 與【朙月拼音】共用詞典
